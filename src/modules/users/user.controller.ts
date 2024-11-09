@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { randomUUID } from 'crypto';
 
 type ParamsUser = {
@@ -37,4 +45,8 @@ export class UserController {
       id: randomUUID(),
     };
   }
+
+  @Get('/profile')
+  @UseGuards(AuthGuard)
+  async profile() {}
 }
