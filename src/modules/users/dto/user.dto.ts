@@ -5,7 +5,7 @@ export type CreateUserDTO = {
   name: string;
 };
 
-export type UserCreateDTO = {
+export type UserCreatedDTO = {
   id: string;
   createdAt: Date;
 } & CreateUserDTO;
@@ -15,11 +15,16 @@ export type UsernameAndEmail = {
   username: string;
 };
 
-export type File = {
+export type FileDTO = {
   fieldname: string;
   originalname: string;
   encoding: string;
   mimetype: string;
   buffer: Buffer;
   size: number;
+};
+
+export type AvatarDTO = {
+  idUser: string;
+  file: FileDTO;
 };

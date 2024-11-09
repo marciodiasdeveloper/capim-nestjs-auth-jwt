@@ -15,11 +15,16 @@ export class CreateUserValidationPipe implements PipeTransform {
   ) {
     if (!name || !email || !username || !password) {
       throw new HttpException(
-        `[name, email, username, password] are required`,
+        `[name, email, username, password] is required`,
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
 
-    return { name, email, username, password };
+    return {
+      name,
+      email,
+      username,
+      password,
+    };
   }
 }

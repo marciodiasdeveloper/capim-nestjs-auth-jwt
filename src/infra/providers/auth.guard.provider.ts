@@ -15,21 +15,21 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
 
-    if (!token) throw new UnauthorizedException();
+    if (!token) {
+      throw new UnauthorizedException();
+    }
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: 'NEST_AUTH',
+        secret: process.env.SECRET_JWT,
       });
-
       request['user'] = payload;
-      return true;
     } catch {
       throw new UnauthorizedException();
     }
+    return true;
   }
 
-  // Bearer  dfsd8u8238shjdfsdfhsdf
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;

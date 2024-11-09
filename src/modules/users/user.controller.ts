@@ -8,11 +8,12 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  Request
+  Request,
+  FileValidator,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { randomUUID } from 'crypto';
-import { AuthGuard } from 'src/infra/providers/auth.guard';
+import { AuthGuard } from 'src/infra/providers/auth.guard.provider';
 
 type ParamsUser = {
   id: string;
@@ -53,11 +54,10 @@ export class UserController {
 
   @Get('/profile')
   @UseGuards(AuthGuard)
-  async profile() { }
-  
+  async profile() {}
+
   @Post('/avatar')
   @UseInterceptors(FileInterceptor('file'))
   @UseGuards(AuthGuard)
-  async uploadAvatar(
-    @Request(),
-    @UploadedFile() file: Express.Multer.File{){}
+  async uploadAvatar(@Request() req, @UploadedFile() file: FileDTO) {}
+}
