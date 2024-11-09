@@ -1,3 +1,17 @@
+import { CreateUserUseCase } from './use-cases/create-user.usecase';
+import { ProfileUserUseCase } from './use-cases/profile-user.usecase';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateUserDTO, FileDTO, UserCreatedDTO } from './dto/user.dto';
+import { UploadAvatarUserUseCase } from './use-cases/upload-avatar-user.usecase';
+import { AuthGuard } from '../../infra/providers/auth-guard.provider';
+import { zodToOpenAPI } from 'nestjs-zod';
+
+import {
+  CreateUserResponseSchemaDTO,
+  CreateUserSchema,
+  CreateUserSchemaDTO,
+} from './schemas/create-user.schema';
+
 import {
   Body,
   Controller,
@@ -9,18 +23,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  CreateUserResponseSchemaDTO,
-  CreateUserSchema,
-  CreateUserSchemaDTO,
-} from './schemas/create-user.schema';
-import { CreateUserUseCase } from './use-cases/create-user.usecase';
-import { ProfileUserUseCase } from './use-cases/profile-user.usecase';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { FileDTO } from './dto/user.dto';
-import { UploadAvatarUserUseCase } from './use-cases/upload-avatar-user.usecase';
-import { AuthGuard } from '../../infra/providers/auth-guard.provider';
-import { zodToOpenAPI } from 'nestjs-zod';
+
 import {
   ApiBearerAuth,
   ApiBody,
@@ -47,8 +50,8 @@ export class UserController {
   })
   @ApiResponse({ status: 201, description: 'Usuário cadastrado com sucesso' })
   @ApiResponse({ status: 400, description: 'User already exists' })
-  async create(@Body() data: CreateUserSchemaDTO) {
-    const user = await this.createUserUseCase.execute(data);
+  async create(@Body() data: CreateUserDTO) {
+    const user: UserCreatedDTO = await this.createUserUseCase.execute(data);
     return CreateUserResponseSchemaDTO.parse(user);
   }
 

@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { hash } from 'bcrypt';
-import { PrismaService } from 'src/infra/database/prisma.service';
 import { CreateUserDTO } from '../dto/user.dto';
 import { IUserRepository } from '../repositories/user.repository';
 
