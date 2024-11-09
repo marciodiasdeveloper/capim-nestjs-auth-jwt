@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
-import { CreateTaskUserUseCase } from './useCases/create-task-user.usecase';
+import { CreateTaskUserUseCase } from './use-cases/create-task-user.usecase';
 import { AuthGuard } from 'src/infra/providers/auth-guard.provider';
 import { CreateTaskUserSchemaDTO } from './schemas/task-user.schema';
 

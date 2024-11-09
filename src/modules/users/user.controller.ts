@@ -14,11 +14,11 @@ import {
   CreateUserSchema,
   CreateUserSchemaDTO,
 } from './schemas/create-user.schema';
-import { CreateUserUseCase } from './useCases/create-user.usecase';
-import { ProfileUserUseCase } from './useCases/profile-user.usecase';
+import { CreateUserUseCase } from './use-cases/create-user.usecase';
+import { ProfileUserUseCase } from './use-cases/profile-user.usecase';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AvatarDTO, FileDTO } from './dto/user.dto';
-import { UploadAvatarUserUseCase } from './useCases/upload-avatar-user.usecase';
+import { FileDTO } from './dto/user.dto';
+import { UploadAvatarUserUseCase } from './use-cases/upload-avatar-user.usecase';
 import { AuthGuard } from '../../infra/providers/auth-guard.provider';
 import { zodToOpenAPI } from 'nestjs-zod';
 import {

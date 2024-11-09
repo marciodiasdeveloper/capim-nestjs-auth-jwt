@@ -5,7 +5,7 @@ export type TaskUserRequestDTO = {
   startAt: Date;
   endAt: Date;
   priority: 'BAIXA' | 'MEDIA' | 'ALTA';
-  status: 'PENDENTE' | 'ANDAMENTO' | 'CONCLUIDA';
+  status: 'PENDENTE' | 'ANDAMENTO' | 'CONCLUÍDA';
 };
 
 export type TaskUserResponseDTO = {
