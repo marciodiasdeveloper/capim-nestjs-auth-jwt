@@ -2,62 +2,84 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
-  Query,
+  Put,
+  Request,
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  Request,
-  FileValidator,
 } from '@nestjs/common';
+import {
+  CreateUserResponseSchemaDTO,
+  CreateUserSchema,
+  CreateUserSchemaDTO,
+} from './schemas/create-user.schema';
+import { CreateUserUseCase } from './useCases/create-user.usecase';
+import { ProfileUserUseCase } from './useCases/profile-user.usecase';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { randomUUID } from 'crypto';
-import { AuthGuard } from 'src/infra/providers/auth.guard.provider';
+import { AvatarDTO, FileDTO } from './dto/user.dto';
+import { UploadAvatarUserUseCase } from './useCases/upload-avatar-user.usecase';
+import { AuthGuard } from '../../infra/providers/auth-guard.provider';
+import { zodToOpenAPI } from 'nestjs-zod';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
-type ParamsUser = {
-  id: string;
-  idCompany: string;
-};
+const schemaUserSwagger = zodToOpenAPI(CreateUserSchema);
 
-type QueryUser = {
-  p: string;
-  r: string;
-};
-
-type BodyUser = {
-  name: string;
-  age: number;
-};
-
-@Controller()
+@Controller('/users')
+@ApiTags('users')
 export class UserController {
-  constructor() {}
+  constructor(
+    private readonly createUserUseCase: CreateUserUseCase,
+    private readonly profileUserUseCase: ProfileUserUseCase,
+    private readonly uploadAvatarUserUseCase: UploadAvatarUserUseCase,
+  ) {}
 
-  @Get('/users/:id')
-  findById(@Param() params: ParamsUser): string {
-    return `Usuário do ID: ${params.id} da empresa ${params.idCompany}`;
-  }
-
-  @Get('/users/:id')
-  findByPages(@Query() queries: QueryUser): string {
-    return `Queries: ${queries.p}`;
-  }
-
-  @Post('/create')
-  create(@Body() data: BodyUser) {
-    return {
-      ...data,
-      id: randomUUID(),
-    };
+  @Post()
+  @ApiBody({
+    description: 'Criação de usuário',
+    schema: schemaUserSwagger,
+  })
+  @ApiResponse({ status: 201, description: 'Usuário cadastrado com sucesso' })
+  @ApiResponse({ status: 400, description: 'User already exists' })
+  async create(@Body() data: CreateUserSchemaDTO) {
+    const user = await this.createUserUseCase.execute(data);
+    return CreateUserResponseSchemaDTO.parse(user);
   }
 
   @Get('/profile')
   @UseGuards(AuthGuard)
-  async profile() {}
+  @ApiBearerAuth()
+  async profile(@Request() req) {
+    return this.profileUserUseCase.execute(req.user.sub);
+  }
 
-  @Post('/avatar')
+  @Put('/avatar')
   @UseInterceptors(FileInterceptor('file'))
   @UseGuards(AuthGuard)
-  async uploadAvatar(@Request() req, @UploadedFile() file: FileDTO) {}
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  async uploadAvatar(@Request() req, @UploadedFile() file: FileDTO) {
+    const result = await this.uploadAvatarUserUseCase.execute({
+      file,
+      idUser: req.user.sub,
+    });
+    return result;
+  }
 }
