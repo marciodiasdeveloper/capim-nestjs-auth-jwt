@@ -10,7 +10,7 @@ import { UserPrismaRepository } from '../users/repositories/prisma/user.prisma.r
   imports: [
     JwtModule.register({
       global: true,
-      secret: 'NESTJS_CURSO',
+      secret: 'any_jwt',
       signOptions: { expiresIn: '60s' },
     }),
   ],
